@@ -37,13 +37,21 @@ app.post('/message', function(request, response){
       break;
 
     case '추천':
-      // var foods = ['떡볶이', '냉면', '짜장면', '탕수육',
-      // '곱창', '순대국', '치킨', '삼겹살'];
-      var foods = ['김성수', '바보'];
+      var foods = ['떡볶이', '냉면', '짜장면', '탕수육',
+      '곱창', '순대국', '치킨', '삼겹살'];
+      // var foods = ['김성수', '바보'];
       var index = Math.floor(Math.random()*foods.length);
       send = {
         'message': {
           'text': `${foods[index]}`
+        }
+      }
+      break;
+
+    case '안녕':
+      send = {
+        'message': {
+          'text': '안녕하세요 Rascal입니다'
         }
       }
       break;
