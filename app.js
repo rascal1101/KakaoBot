@@ -20,6 +20,11 @@ app.get('/keyboard', function(request, response){
   response.json(data);
 });
 
+app.post('/webhook', function(request, response){
+  var msg = request.body.content;
+  console.log(msg);
+})
+
 app.post('/message', function(request, response){
   var msg = request.body.content;
   console.log(`전달받은 메시지: ${msg}`);
