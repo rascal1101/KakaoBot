@@ -34,19 +34,29 @@ app.post('/webhook', (req, res) => {
                 kakaomap.callRestaurantFromCategory(place).then(function(data){
                   console.log("index.js");
                   console.log(data);
-                  res.json(data);
+                  var responseData = makeCardImageRsponse();
+                  var arr = [];
+                  for(var i=0;i<data.restaurants.length;i++){
+                    var title = data.restaurants[i].place_name;
+                    var desc = data.restaurants[i].road_address_name;
+                    var place_url = data.restaurants[i].place_url;
+                    arr.push(makeCard('0',desc,title,place_url));
+                  }
+                  responseData.contents[0].cards = arr;
+                  console.log(responseData);
+                  res.send(responseData);
                 }, function(err){
                   console.log(err);
                 });
         } else if (input.intent.name === "스킬"){
-                console.log("스킬 is called");
-                res.send(makeTextResponse("skill test on"));
+                console.log(makeTextResponse2("skill test on"));
+                res.send(makeTextResponse2("skill test on"));
         } else if(input.intent.name === "키워드 추천"){
                 var keyword = input.action.params.menu;
                 console.log(keyword);
                 kakaomap.callRestaurantFromKeyword(keyword).then(function(data){
                   console.log(data);
-                  res.json(data);
+                  res.json(data.restaurants[0]);
                 }, function(err){
                   console.log(err);
                 });
@@ -54,7 +64,20 @@ app.post('/webhook', (req, res) => {
                 res.send(makeTextResponse("unknown intent name."));
         }
 });
-
+function makeTextResponse2(text){
+  return {
+      "version": "2.0",
+      "template": {
+          "outputs": [
+              {
+                  "simpleText": {
+                      "text": text
+                  }
+              }
+          ]
+      }
+  };
+}
 
 function makeTextResponse(text) {
         return {
@@ -68,32 +91,37 @@ function makeTextResponse(text) {
 }
 
 
-function makeCardImageRsponse (title, image, desc) {
-        return {
-          "contents":[
-            {
-              "type":"card.image",
-              "cards":[
-                {
-                  "imageUrl": image,
-                  "description": desc,
-                  "title": title,
-                  "linkUrl": {
-                  },
-                  "buttons":[
-                    {
-                      "type": "url",
-                      "label": "더보기",
-                      "data": {
-                        "url": "https://search.daum.net/search?w=img&nil_search=btn&DA=NTB&enc=utf8&q=%EA%B3%A0%EC%96%91%EC%9D%B4"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
+function makeCardImageRsponse () {
+        return   {
+        "contents":
+        [
+          {
+            "type":"card.image",
+            "cards":
+            [
+            ]
+          }
+        ]
+      }
+}
+
+function makeCard(image_url, desc, title, place_url){
+  return {
+    "imageUrl":"http://blogfiles.naver.net/20130116_176/yasiyam79_1358324331432NupBg_JPEG/tumblr_lsawu3nzs01qi23vmo1_500_large.jpg",
+    "description": desc,
+    "title": title,
+    "linkUrl": {
+    },
+    "buttons":[
+      {
+        "type":"url",
+        "label":"카카오맵에서 열기",
+        "data":{
+          "url" : place_url
         }
+      }
+    ]
+  };
 }
 
 
